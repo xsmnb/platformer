@@ -12,49 +12,45 @@ let left = false,
   swapped8 = false,
   swapped9 = false;
   let radius = 7;
-  let old;
+  let oldPos;
+  let secondOldPos;
   function submitRadius(){
     radius = document.getElementById('radius').value;
   }
   document.addEventListener("keydown", async function (event) {
-    switch (event.key) {
-      case "ArrowLeft":
-        if (!left) {
-          left = true;
-          await onLeftArrowKeyPress();
-        }
-        break;
-      case "ArrowRight":
-        if (!right) {
-          right = true;
-          await onRightArrowKeyPress();
-        }
-        break;
-      case "ArrowUp":
+    if (event.key === "ArrowLeft") {
+      if (!left) {
+        left = true;
+        await onLeftArrowKeyPress();
+      }
+    } else if (event.key === "ArrowRight") {
+      if (!right) {
+        right = true;
+        await onRightArrowKeyPress();
+      }
+    } else if (event.key === "ArrowUp") {
+      if(!up){
         up = true;
         await onUpArrowKeyPress();
         up = false;
-        break;
-      case "ArrowDown":
-        if (!down) {
-          await onDownArrowKeyPress();
-        }
-        break;
+      }
+    } else if (event.key === "ArrowDown") {
+      if (!down) {
+        await onDownArrowKeyPress();
+      }
     }
-  });  
+  });
+  
   document.addEventListener("keyup", function (event) {
-    switch (event.key) {
-      case "ArrowLeft":
-        left = false;
-        break;
-      case "ArrowRight":
-        right = false;
-        break;
-      case "ArrowDown":
-        down = false;
-        break;
+    if (event.key === "ArrowLeft") {
+      left = false;
+    } else if (event.key === "ArrowRight") {
+      right = false;
+    } else if (event.key === "ArrowDown") {
+      down = false;
     }
-  });  
+  });
+  
 let gameArr = [
   [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
   [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,3,0,0,0,0,1,0,0,0,0,0,0,0,1],
@@ -114,7 +110,7 @@ async function visualizeArrayInHTML(array) {
   const colorMap = {
     0: "white",
     1: "black",
-    2: "blue",
+    2: "#0000ff",
     3: "yellow",
     4: "red",
     5: "gray",
@@ -122,6 +118,8 @@ async function visualizeArrayInHTML(array) {
     7: "green",
     8: "black",
     9: "white",
+    10: "#0000ff66",
+    11: "#0000ff33"
   };
   let htmlContent = '<table style="border-collapse: collapse;">';
 
@@ -140,7 +138,15 @@ async function visualizeArrayInHTML(array) {
   for (let i = Math.max(0, centerY - radius); i < Math.min(array.length, centerY + radius + 1); i++) {
     htmlContent += "<tr>";
     for (let j = Math.max(0, centerX - radius); j < Math.min(array[i].length, centerX + radius + 1); j++) {
-      const color = colorMap[array[i][j]];
+      let value = array[i][j];
+      if (secondOldPos && i === secondOldPos[0] && j === secondOldPos[1] && array[i][j] !== 2) {
+        value = 11; // Set the value to 10 for visualization
+      }
+      if (oldPos && i === oldPos[0] && j === oldPos[1] && array[i][j] !== 2) {
+        secondOldPos = oldPos;
+        value = 10; // Set the value to 10 for visualization
+      }
+      const color = colorMap[value];
       htmlContent += `<td id"a=${i}${j}" style="background-color: ${color}; width: ${
         cellWidth
       }px; height: ${
@@ -150,15 +156,16 @@ async function visualizeArrayInHTML(array) {
     htmlContent += "</tr>";
   }
   htmlContent += "</table>";
-  old = htmlContent;
-  body.innerHTML = htmlContent+old;
-  old.className = 'old';
-  for (let i = 10; i >= 0; i--) {
-    setTimeout(() => {
-      old.style.opacity = i / 10;
-    }, (10 - i) * 200);
+  body.innerHTML = htmlContent;
+  for (let i = 0; i < array.length; i++) {
+    for (let j = 0; j < array[i].length; j++) {
+      if (array[i][j] === 2) {
+        oldPos=[i, j];
+      }
+    }
   }
 }
+
 
 
 // Call the function to visualize the specified area
@@ -427,8 +434,9 @@ async function onRightArrowKeyPress() {
 }
 
 async function onUpArrowKeyPress() {
-  let a = 1;
-  while (a < 4) {
+  let ease = [250,200,150];
+  let a = 0;
+  while (a < 3) {
     let x, y;
     for (let i = 0; i < gameArr.length; i++) {
       for (let j = 0; j < gameArr[i].length; j++) {
@@ -452,7 +460,7 @@ async function onUpArrowKeyPress() {
       a++;
     }
     visualizeArrayInHTML(gameArr);
-    await wait(200);
+    await wait(ease[a]);
     a++;
   }
   await dropPlayer();
