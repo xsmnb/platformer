@@ -1,12 +1,25 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="styles.css">
   <title>Platformer Game</title>
 </head>
+
 <body>
+
+  <div id="gameroot"></div>
+  <p>custom level:<textarea name="" id="custom" cols="30" rows="10"></textarea><button
+      onclick="
+      start = true;
+      visualizeArrayInHTML(gameArr);
+      var custom = document.getElementById('custom').value;
+      eval(custom);
+      ">Start</button>
+  </p>
   <script src="script.js"></script>
 </body>
+
 </html>

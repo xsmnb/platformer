@@ -11,12 +11,10 @@ let left = false,
   count8 = 0,
   swapped8 = false,
   swapped9 = false;
-  let radius = 7;
   let oldPos;
   let secondOldPos;
-  function submitRadius(){
-    radius = document.getElementById('radius').value;
-  }
+  let start = false;
+  let radius = 7;
   document.addEventListener("keydown", async function (event) {
     if (event.key === "ArrowLeft") {
       if (!left) {
@@ -102,10 +100,11 @@ function addBorder(array) {
 for(let i =0; i<radius;i++){
   gameArr = addBorder(gameArr);
 }
-const body = document.body;
-const cellWidth = window.innerWidth / 15;
-const cellHeight = window.innerHeight / 15;
+const body = document.getElementById('gameroot');
+let cellWidth = window.innerWidth / (2*radius+1);
+let cellHeight = window.innerHeight / (2*radius+1);
 async function visualizeArrayInHTML(array) {
+  if(start == true){
   let centerX, centerY;
   const colorMap = {
     0: "white",
@@ -164,12 +163,12 @@ async function visualizeArrayInHTML(array) {
       }
     }
   }
-}
+}}
 
 
 
 // Call the function to visualize the specified area
-visualizeArrayInHTML(gameArr);
+
 
 async function drop() {
   await wait(200);
@@ -208,6 +207,8 @@ for (i = 0; i < gameArr.length; i++) {
     }
   }
 }
+console.log(primary8pos);
+console.log(primary9pos);
 function swapEightAndNineInArray(arr) {
   for(let i=0;i<arr.length;i++){
     for(let j=0;j<arr[i].length;j++){
@@ -250,7 +251,6 @@ function swapEightAndNineInArray(arr) {
         break;
     }
   }
-  
   for (let i = 0; i < primary9pos.length; i++) {
     switch (swapped9) {
       case false:
@@ -434,7 +434,7 @@ async function onRightArrowKeyPress() {
 }
 
 async function onUpArrowKeyPress() {
-  let ease = [250,200,150];
+  let ease = [275,200,125];
   let a = 0;
   while (a < 3) {
     let x, y;
